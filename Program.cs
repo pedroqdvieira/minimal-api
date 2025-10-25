@@ -1,8 +1,18 @@
+using MinimalApi.Infraestrutura.Db;
+using MinimalApi.DTOs;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<DbContexto>(options => {
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("mysql"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("mysql"))
+    );
+});
 
 var app = builder.Build();
 
@@ -15,7 +25,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/", () => "Olá Mundo!");
 
-app.MapPost("/login", (MinimalApi.DTOs.LoginDTO loginDTO) =>
+app.MapPost("/login", (LoginDTO loginDTO) =>
 {
     if (loginDTO.Email == "adm@teste.com" && loginDTO.Senha == "123456")
     {
